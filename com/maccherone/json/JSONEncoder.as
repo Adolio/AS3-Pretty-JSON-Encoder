@@ -308,21 +308,33 @@ package com.maccherone.json
 			// create a string to store the object's jsonstring value
 			var s:String = "";
 			
+			// sorting variables
+			var key:String;
+			var sortedKeys:Array = [];
+			
 			// determine if o is a class instance or a plain object
 			var classInfo:XML = describeType( o );
 			if ( classInfo.@name.toString() == "Object" )
 			{
+				// Create a list of all variables and accessors
+				for (var keyStr:String in o ) {
+					sortedKeys.push( keyStr );
+				}
+				
+				// Sort variables and accessors
+				sortedKeys.sort();
+				
 				// the value of o[key] in the loop below - store this 
 				// as a variable so we don't have to keep looking up o[key]
 				// when testing for valid values to convert
 				var value:Object;
-				
+
 				// loop over the keys in the object and add their converted
 				// values to the string
-				for ( var key:String in o )
+				for each ( key in sortedKeys )
 				{
 					// assign value to a variable for quick lookup
-					value = o[key];
+					value = o[ key ];
 					
 					// don't add function's to the JSON string
 					if ( value is Function )
@@ -350,9 +362,17 @@ package com.maccherone.json
 			}
 			else // o is a class instance
 			{
+				// Create a list of all variables and accessors
+				for each ( var v:XML in classInfo..*.( name() == "variable" || name() == "accessor" ) ) {
+					sortedKeys.push( v.@name );
+				}
+				
+				// Sort variables and accessors
+				sortedKeys.sort();
+				
 				// Loop over all of the variables and accessors in the class and 
 				// serialize them along with their values.
-				for each ( var v:XML in classInfo..*.( name() == "variable" || name() == "accessor" ) )
+				for each ( key in sortedKeys )
 				{
 					// When the length is 0 we're adding the first item so
 					// no comma is necessary
@@ -364,11 +384,11 @@ package com.maccherone.json
 						}
 					}
 					
-					s += escapeString( v.@name.toString() ) + ":"
+					s += escapeString( key ) + ":"
 					if (pretty) {
 						s += " "
 					}
-					s += convertToString( o[ v.@name ] );
+					s += convertToString( o[ key ] );
 				}
 				
 			}
@@ -389,10 +409,22 @@ package com.maccherone.json
 			// create a string to store the object's jsonstring value
 			var s:String = "";
 			
+			// sorting variables
+			var key:String;
+			var sortedKeys:Array = [];
+			
 			// determine if o is a class instance or a plain object
 			var classInfo:XML = describeType( o );
 			if ( classInfo.@name.toString() == "Object" )
 			{
+				// Create a list of all variables and accessors
+				for (var keyStr:String in o ) {
+					sortedKeys.push( keyStr );
+				}
+				
+				// Sort variables and accessors
+				sortedKeys.sort();
+				
 				// the value of o[key] in the loop below - store this 
 				// as a variable so we don't have to keep looking up o[key]
 				// when testing for valid values to convert
@@ -400,10 +432,10 @@ package com.maccherone.json
 				
 				// loop over the keys in the object and add their converted
 				// values to the string
-				for ( var key:String in o )
+				for each ( key in sortedKeys )
 				{
 					// assign value to a variable for quick lookup
-					value = o[key];
+					value = o[ key ];
 					
 					// don't add function's to the JSON string
 					if ( value is Function )
@@ -428,9 +460,17 @@ package com.maccherone.json
 			}
 			else // o is a class instance
 			{
+				// Create a list of all variables and accessors
+				for each ( var v:XML in classInfo..*.( name() == "variable" || name() == "accessor" ) ) {
+					sortedKeys.push( v.@name );
+				}
+				
+				// Sort variables and accessors
+				sortedKeys.sort();
+				
 				// Loop over all of the variables and accessors in the class and 
 				// serialize them along with their values.
-				for each ( var v:XML in classInfo..*.( name() == "variable" || name() == "accessor" ) )
+				for each ( key in sortedKeys )
 				{
 					// When the length is 0 we're adding the first item so
 					// no comma is necessary
@@ -439,11 +479,11 @@ package com.maccherone.json
 						s += ",\n"
 					}
 					
-					s += getPadding(level) + escapeString( v.@name.toString() ) + ":"
+					s += getPadding(level) + escapeString( key ) + ":"
 					if (pretty) {
 						s += " "
 					}
-					s += convertToString( o[ v.@name ] );
+					s += convertToString( o[ key ] );
 				}
 				
 			}
